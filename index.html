@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Solar System Web Simulation</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Import Map for Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Main container for the 3D scene -->
+    <div id="container"></div>
+    
+    <!-- HUD Controls Panel -->
+    <div id="hud">
+        <div class="hud-controls">
+            <button id="playPauseBtn" class="control-btn">⏸️ Pause</button>
+            <div class="speed-control">
+                <label for="speedSlider">Speed:</label>
+                <input type="range" id="speedSlider" min="0.1" max="500" value="0.1" step="0.1">
+                <span id="speedValue">0.1x</span>
+            </div>
+            <div class="time-display">
+                <div class="date-display">
+                    <span id="sgDate">2025-01-01</span>
+                </div>
+                <div class="clock-display">
+                    <span id="sgClock">00:00:00 SGT</span>
+                </div>
+            </div>
+            <div class="checkbox-control">
+                <input type="checkbox" id="realtimeToggle">
+                <label for="realtimeToggle">Real-time</label>
+            </div>
+            <button id="jumpNowBtn" class="control-btn">⏱️ Now</button>
+            <button id="resetCameraBtn" class="control-btn">🔁 Reset Camera</button>
+            <div class="checkbox-control">
+                <input type="checkbox" id="backgroundToggle" checked>
+                <label for="backgroundToggle">Grid View</label>
+            </div>
+        </div>
+        
+        <!-- Physics Ratio Information Panel -->
+        <div id="physicsPanel" class="physics-panel">
+            <div class="physics-header">
+                <h4>🌌 Physics Accuracy</h4>
+                <button id="togglePhysicsBtn" class="toggle-btn collapsed">▶</button>
+            </div>
+            <div id="physicsContent" class="physics-content collapsed">
+                <div class="physics-score">
+                    <span class="score-label">Accuracy Score:</span>
+                    <span class="score-value" id="physicsScore">3/10</span>
+                </div>
+                <div class="physics-ratios">
+                    <div class="ratio-category">
+                        <h5>Orbital Periods</h5>
+                        <div class="ratio-item">
+                            <span>Mercury:</span>
+                            <span class="ratio-good">✓ Accurate</span>
+                        </div>
+                        <div class="ratio-item">
+                            <span>Venus:</span>
+                            <span class="ratio-good">✓ Accurate</span>
+                        </div>
+                        <div class="ratio-item">
+                            <span>Earth:</span>
+                            <span class="ratio-good">✓ Reference</span>
+                        </div>
+                        <div class="ratio-item">
+                            <span>Mars:</span>
+                            <span class="ratio-good">✓ Accurate</span>
+                        </div>
+                    </div>
+                    <div class="ratio-category">
+                        <h5>Planetary Sizes</h5>
+                        <div class="ratio-item">
+                            <span>Gas Giants:</span>
+                            <span class="ratio-bad">✗ Undersized</span>
+                        </div>
+                        <div class="ratio-item">
+                            <span>Rocky Planets:</span>
+                            <span class="ratio-good">✓ Accurate</span>
+                        </div>
+                    </div>
+                    <div class="ratio-category">
+                        <h5>Orbital Mechanics</h5>
+                        <div class="ratio-item">
+                            <span>Orbit Shape:</span>
+                            <span class="ratio-bad">✗ Circular only</span>
+                        </div>
+                        <div class="ratio-item">
+                            <span>Orbital Plane:</span>
+                            <span class="ratio-bad">✗ No inclination</span>
+                        </div>
+                        <div class="ratio-item">
+                            <span>Rotation Speeds:</span>
+                            <span class="ratio-bad">✗ Incorrect ratios</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Planet Information Panel -->
+    <div id="planetPanel" class="hidden">
+        <div class="panel-header">
+            <h2 id="planetName">Planet Name</h2>
+            <button id="closePanelBtn" class="close-btn">✕</button>
+        </div>
+        <div class="panel-content">
+            <div class="info-row">
+                <span class="info-label">Size:</span>
+                <span id="planetSize">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Orbit Radius:</span>
+                <span id="planetOrbit">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Rotation Period:</span>
+                <span id="planetRotation">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Revolution Period:</span>
+                <span id="planetRevolution">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Moons:</span>
+                <span id="planetMoons">-</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Legend (optional) -->
+    <div id="legend">
+        <h3>Controls</h3>
+        <ul>
+            <li>🖱️ Left Click + Drag: Rotate view</li>
+            <li>🖱️ Right Click + Drag: Pan view</li>
+            <li>🖱️ Scroll: Zoom in/out</li>
+            <li>🖱️ Click Planet: View details</li>
+            <li>⎋ ESC: Close info panel</li>
+            <li>⌨️ H: Toggle help</li>
+            <li>⌨️ Ctrl+S: Screenshot</li>
+            <li>⌨️ P: Performance mode</li>
+        </ul>
+    </div>
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Solar System...</div>
+    </div>
+    
+    <!-- Help Modal -->
+    <div id="help-modal">
+        <h2>🌌 Solar System Simulation Help</h2>
+        <button class="close-btn">✕</button>
+        
+        <h3>Navigation Controls</h3>
+        <ul>
+            <li><strong>Mouse:</strong> Left click and drag to rotate the view</li>
+            <li><strong>Mouse:</strong> Right click and drag to pan the view</li>
+            <li><strong>Mouse:</strong> Scroll wheel to zoom in/out</li>
+            <li><strong>Touch:</strong> Swipe to rotate, pinch to zoom</li>
+        </ul>
+        
+        <h3>Simulation Controls</h3>
+        <ul>
+            <li><strong>Space:</strong> Play/Pause simulation</li>
+            <li><strong>Speed Slider:</strong> Adjust simulation speed (0.1x - 500x)</li>
+            <li><strong>Real-time:</strong> Sync simulation with actual UTC time</li>
+            <li><strong>Jump to Now:</strong> Reset simulation to current time</li>
+        </ul>
+        
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+            <li><strong>Space:</strong> Play/Pause</li>
+            <li><strong>R:</strong> Reset camera</li>
+            <li><strong>H:</strong> Toggle this help window</li>
+            <li><strong>P:</strong> Toggle performance mode</li>
+            <li><strong>Ctrl+S:</strong> Take screenshot</li>
+            <li><strong>ESC:</strong> Close panels</li>
+        </ul>
+        
+        <h3>Features</h3>
+        <ul>
+            <li>🪐 All 8 planets with accurate relative sizes</li>
+            <li>🌙 Major moons for each planet</li>
+            <li>☄️ Asteroid belt between Mars and Jupiter</li>
+            <li>🌠 Comets with realistic elliptical orbits</li>
+            <li>📊 Click any planet to view detailed information</li>
+            <li>📸 Take screenshots of your favorite views</li>
+        </ul>
+    </div>
+    
+    <!-- Modal Overlay -->
+    <div id="modal-overlay"></div>
+    
+    <!-- Main JavaScript file (ES Module) -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>
