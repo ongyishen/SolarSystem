@@ -66,8 +66,8 @@ An interactive, browser-based 3D simulation of our solar system built with HTML,
 
 1. **Clone or download the project**
    ```bash
-   git clone https://github.com/ongyishen/ProjectAI.git
-   cd ProjectAI/SolarSystem
+   git clone https://github.com/ongyishen/SolarSystem.git
+
    ```
 
 2. **Start a local server** (using VS Code Live Server recommended)
