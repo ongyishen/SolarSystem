@@ -6,6 +6,10 @@ An interactive, browser-based 3D simulation of our solar system built with HTML,
 ![jQuery](https://img.shields.io/badge/jQuery-3.7.1-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
+## 📸 Screenshot
+
+![Solar System Simulation](solar-system.png)
+
 ### 🌐 Live Demo
 👉 [View Website on GitHub Pages](https://ongyishen.github.io/SolarSystem/)
 
