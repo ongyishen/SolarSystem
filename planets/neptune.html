@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neptune - 3D Planet View | Solar System Simulation</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="planet-detail.css">
+    <!-- jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Import Map for Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body class="planet-detail-page">
+    <!-- Navigation Header -->
+    <header id="navigation">
+        <div class="nav-container">
+            <button id="backBtn" class="nav-btn">← Back to Solar System</button>
+            <div class="planet-title">
+                <h1>Neptune</h1>
+                <span class="subtitle">The Windy Planet</span>
+            </div>
+            <div class="planet-switcher">
+                <select id="planetSelector" class="planet-select">
+                    <option value="mercury">Mercury</option>
+                    <option value="venus">Venus</option>
+                    <option value="earth">Earth</option>
+                    <option value="mars">Mars</option>
+                    <option value="jupiter">Jupiter</option>
+                    <option value="saturn">Saturn</option>
+                    <option value="uranus">Uranus</option>
+                    <option value="neptune" selected>Neptune</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="mainContent">
+        <!-- 3D Scene Container -->
+        <div id="planetContainer">
+            <div id="planetScene"></div>
+            
+            <!-- 3D Controls -->
+            <div class="controls-overlay">
+                <div class="zoom-controls">
+                    <button id="zoomInBtn" class="control-btn">+</button>
+                    <button id="zoomOutBtn" class="control-btn">−</button>
+                    <button id="resetViewBtn" class="control-btn">⟲</button>
+                </div>
+                
+                <div class="rotation-controls">
+                    <button id="autoRotateToggle" class="control-btn active">🔄</button>
+                    <label for="rotationSpeed">Speed:</label>
+                    <input type="range" id="rotationSpeed" min="0" max="100" value="50">
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Neptune...</div>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <aside id="infoPanel" class="info-panel">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="details">Details</button>
+                <button class="tab-btn" data-tab="moons">Moons</button>
+                <button class="tab-btn" data-tab="exploration">Exploration</button>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <h2>Neptune Overview</h2>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Type:</span>
+                            <span class="stat-value">Ice Giant</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Diameter:</span>
+                            <span class="stat-value">49,244 km</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Mass:</span>
+                            <span class="stat-value">1.02 × 10²⁶ kg</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Distance from Sun:</span>
+                            <span class="stat-value">4.5 billion km (30 AU)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Orbital Period:</span>
+                            <span class="stat-value">165 years</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rotation Period:</span>
+                            <span class="stat-value">16 hours</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Moons:</span>
+                            <span class="stat-value">16 confirmed</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Atmosphere:</span>
+                            <span class="stat-value">Hydrogen, Helium, Methane</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div id="details" class="tab-content">
+                    <h2>Neptune Details</h2>
+                    <div class="detail-sections">
+                        <section class="detail-section">
+                            <h3>Mathematical Discovery</h3>
+                            <p>Neptune is the only planet discovered through mathematical prediction rather than direct observation. Astronomers calculated its position based on irregularities in Uranus's orbit, leading to its discovery in 1846.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Extreme Weather</h3>
+                            <p>Neptune has the fastest winds in the Solar System, reaching speeds up to 2,100 km/h. These supersonic winds create massive storm systems, including the Great Dark Spot observed by Voyager 2.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Deep Blue Color</h3>
+                            <p>Neptune's striking deep blue color comes from higher concentrations of methane in its atmosphere compared to Uranus. Methane absorbs red light, allowing primarily blue light to reflect back into space.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Internal Heat Source</h3>
+                            <p>Unlike Uranus, Neptune radiates more than twice as much energy as it receives from the Sun. This internal heat drives its violent weather and atmospheric dynamics.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Diamond Rain</h3>
+                            <p>The extreme pressure and temperature conditions in Neptune's atmosphere may cause carbon to compress into diamonds, which then "rain" down through the layers of the planet.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Faint Rings</h3>
+                            <p>Neptune has a faint ring system consisting of several dark rings made of ice and rock. These rings are much less prominent than Saturn's and were difficult to detect from Earth.</p>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Moons Tab -->
+                <div id="moons" class="tab-content">
+                    <h2>Neptune's Major Moons</h2>
+                    <div class="moon-info">
+                        <div class="moon-stats">
+                            <h3>Triton</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">2,707 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Neptune:</span>
+                                <span class="stat-value">354,760 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">6 days (retrograde)</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Nereid</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">340 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Neptune:</span>
+                                <span class="stat-value">5,513,400 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">360 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Proteus</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">416 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Neptune:</span>
+                                <span class="stat-value">117,647 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">1.1 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Naiad</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">66 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Neptune:</span>
+                                <span class="stat-value">48,227 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">0.3 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-description">
+                            <p>Triton is by far Neptune's largest moon, comprising over 99.5% of the mass orbiting Neptune. It has a retrograde orbit and is geologically active, with nitrogen geysers erupting from its surface. Triton is thought to be a captured Kuiper Belt object and is gradually spiraling inward, eventually destined to be torn apart by Neptune's gravity thousands of years from now. The smaller moons are thought to be rubble piles and irregular in shape.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exploration Tab -->
+                <div id="exploration" class="tab-content">
+                    <h2>Neptune Exploration</h2>
+                    <div class="exploration-timeline">
+                        <div class="timeline-item">
+                            <h3>Mathematical Prediction (1840s)</h3>
+                            <p>Urbain Le Verrier and John Couch Adams independently calculated the position of an unknown planet causing perturbations in Uranus's orbit.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Discovery (1846)</h3>
+                            <p>Johann Galle discovered Neptune using Le Verrier's calculations, marking the first planet discovered through mathematical prediction.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Voyager 2 (1989)</h3>
+                            <p>Voyager 2 is the only spacecraft to have visited Neptune, providing our only close-up observations of the planet, its rings, and its moons. It discovered the Great Dark Spot and studied Triton in detail.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Hubble Observations (1990s-Present)</h3>
+                            <p>The Hubble Space Telescope continues to monitor Neptune, tracking seasonal changes, storm systems, and the disappearance and reformation of dark spots.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Ground-Based Observations</h3>
+                            <p>Advanced telescopes like Keck and VLT have provided detailed observations of Neptune's atmosphere, weather patterns, and moon system.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Future Missions</h3>
+                            <p>Several missions to Neptune have been proposed, including Neptune Odyssey and Trident, which would study the planet, Triton, and potentially deploy atmospheric probes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <p>🔷 Neptune • Eighth Planet from the Sun • The Windy World</p>
+            <div class="footer-links">
+                <button id="screenshotBtn" class="footer-btn">📸 Screenshot</button>
+                <button id="shareBtn" class="footer-btn">🔗 Share</button>
+                <button id="fullscreenBtn" class="footer-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Neptune Detail JavaScript -->
+    <script type="module" src="neptune.js"></script>
+</body>
+</html>

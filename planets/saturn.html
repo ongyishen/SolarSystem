@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saturn - 3D Planet View | Solar System Simulation</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="planet-detail.css">
+    <!-- jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Import Map for Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body class="planet-detail-page">
+    <!-- Navigation Header -->
+    <header id="navigation">
+        <div class="nav-container">
+            <button id="backBtn" class="nav-btn">← Back to Solar System</button>
+            <div class="planet-title">
+                <h1>Saturn</h1>
+                <span class="subtitle">The Ringed Planet</span>
+            </div>
+            <div class="planet-switcher">
+                <select id="planetSelector" class="planet-select">
+                    <option value="mercury">Mercury</option>
+                    <option value="venus">Venus</option>
+                    <option value="earth">Earth</option>
+                    <option value="mars">Mars</option>
+                    <option value="jupiter">Jupiter</option>
+                    <option value="saturn" selected>Saturn</option>
+                    <option value="uranus">Uranus</option>
+                    <option value="neptune">Neptune</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="mainContent">
+        <!-- 3D Scene Container -->
+        <div id="planetContainer">
+            <div id="planetScene"></div>
+            
+            <!-- 3D Controls -->
+            <div class="controls-overlay">
+                <div class="zoom-controls">
+                    <button id="zoomInBtn" class="control-btn">+</button>
+                    <button id="zoomOutBtn" class="control-btn">−</button>
+                    <button id="resetViewBtn" class="control-btn">⟲</button>
+                </div>
+                
+                <div class="rotation-controls">
+                    <button id="autoRotateToggle" class="control-btn active">🔄</button>
+                    <label for="rotationSpeed">Speed:</label>
+                    <input type="range" id="rotationSpeed" min="0" max="100" value="50">
+                </div>
+
+                <div class="atmosphere-controls">
+                    <div class="checkbox-control">
+                        <input type="checkbox" id="ringsToggle" checked>
+                        <label for="ringsToggle">Show Rings</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Saturn...</div>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <aside id="infoPanel" class="info-panel">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="details">Details</button>
+                <button class="tab-btn" data-tab="moons">Moons</button>
+                <button class="tab-btn" data-tab="exploration">Exploration</button>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <h2>Saturn Overview</h2>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Type:</span>
+                            <span class="stat-value">Gas Giant</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Diameter:</span>
+                            <span class="stat-value">116,460 km</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Mass:</span>
+                            <span class="stat-value">5.68 × 10²⁶ kg</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Distance from Sun:</span>
+                            <span class="stat-value">1.4 billion km (9.5 AU)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Orbital Period:</span>
+                            <span class="stat-value">29 years</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rotation Period:</span>
+                            <span class="stat-value">10.7 hours</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Moons:</span>
+                            <span class="stat-value">146 confirmed</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Atmosphere:</span>
+                            <span class="stat-value">Hydrogen, Helium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div id="details" class="tab-content">
+                    <h2>Saturn Details</h2>
+                    <div class="detail-sections">
+                        <section class="detail-section">
+                            <h3>Ring System</h3>
+                            <p>Saturn's magnificent ring system is the most extensive in the Solar System, consisting of billions of ice and rock particles ranging from tiny grains to house-sized chunks. The rings are divided into multiple groups labeled A through G.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Composition</h3>
+                            <p>Saturn is a gas giant composed primarily of hydrogen and helium, similar to Jupiter but with less heavy elements. Its core may consist of rock and metal surrounded by metallic hydrogen and liquid hydrogen.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Low Density</h3>
+                            <p>Saturn is the least dense planet in the Solar System, with a density only about 30% that of water. If there were a large enough ocean, Saturn would float!</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Hexagonal Storm</h3>
+                            <p>Saturn's north pole features a bizarre hexagonal storm pattern, a nearly perfect hexagon about 13,800 km wide. This unique weather pattern has persisted for decades.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Wind Speeds</h3>
+                            <p>Saturn experiences some of the fastest winds in the Solar System, with speeds reaching up to 1,800 km/h at its equator, much faster than Jupiter's winds.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Aurora Displays</h3>
+                            <p>Saturn generates spectacular aurora displays at its poles, created by charged particles from the solar wind interacting with its magnetic field and atmosphere.</p>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Moons Tab -->
+                <div id="moons" class="tab-content">
+                    <h2>Saturn's Major Moons</h2>
+                    <div class="moon-info">
+                        <div class="moon-stats">
+                            <h3>Titan</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">5,149 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Saturn:</span>
+                                <span class="stat-value">1,221,830 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">16 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Rhea</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">1,527 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Saturn:</span>
+                                <span class="stat-value">527,040 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">4.5 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Iapetus</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">1,470 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Saturn:</span>
+                                <span class="stat-value">3,561,300 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">79 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Enceladus</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">504 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Saturn:</span>
+                                <span class="stat-value">238,020 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">1.4 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-description">
+                            <p>Saturn's moon system is incredibly diverse. Titan is larger than Mercury and has a thick atmosphere and liquid methane lakes. Rhea is heavily cratered and may have a faint ring system. Iapetus has a dramatic two-toned appearance with one dark and one bright hemisphere. Enceladus is geologically active, spraying water geysers from its south pole and likely harboring a subsurface ocean.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exploration Tab -->
+                <div id="exploration" class="tab-content">
+                    <h2>Saturn Exploration</h2>
+                    <div class="exploration-timeline">
+                        <div class="timeline-item">
+                            <h3>Early Observations (Ancient Times)</h3>
+                            <p>Saturn has been known since ancient times and is visible to the naked eye. Its name comes from the Roman god of agriculture and wealth.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Galileo's Telescopic Discovery (1610)</h3>
+                            <p>Galileo was the first to observe Saturn's rings, though his telescope was not powerful enough to resolve them clearly, leading him to describe Saturn as having "ears."</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Pioneer 11 (1979)</h3>
+                            <p>The first spacecraft to visit Saturn, providing close-up images of the planet and its rings, and discovering Saturn's magnetic field.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Voyager Missions (1980-1981)</h3>
+                            <p>Voyager 1 and 2 conducted detailed studies of Saturn, its rings, and moons, revealing complex ring structures and active geology on several moons.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Cassini-Huygens (2004-2017)</h3>
+                            <p>NASA's Cassini orbiter and ESA's Huygens probe provided unprecedented insights into Saturn, its rings, and moons. Huygens landed on Titan, while Cassini studied the entire system for 13 years.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Future Missions</h3>
+                            <p>Dragonfly (planned 2027) will be a nuclear-powered drone exploring Titan's surface and atmosphere, searching for signs of prebiotic chemistry and potential habitability.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <p>🪐 Saturn • Sixth Planet from the Sun • The Ringed Beauty</p>
+            <div class="footer-links">
+                <button id="screenshotBtn" class="footer-btn">📸 Screenshot</button>
+                <button id="shareBtn" class="footer-btn">🔗 Share</button>
+                <button id="fullscreenBtn" class="footer-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Saturn Detail JavaScript -->
+    <script type="module" src="saturn.js"></script>
+</body>
+</html>

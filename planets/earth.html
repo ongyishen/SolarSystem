@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth - 3D Planet View | Solar System Simulation</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="planet-detail.css">
+    <!-- jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Import Map for Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body class="planet-detail-page">
+    <!-- Navigation Header -->
+    <header id="navigation">
+        <div class="nav-container">
+            <button id="backBtn" class="nav-btn">← Back to Solar System</button>
+            <div class="planet-title">
+                <h1>Earth</h1>
+                <span class="subtitle">The Blue Planet</span>
+            </div>
+            <div class="planet-switcher">
+                <select id="planetSelector" class="planet-select">
+                    <option value="mercury">Mercury</option>
+                    <option value="venus">Venus</option>
+                    <option value="earth" selected>Earth</option>
+                    <option value="mars">Mars</option>
+                    <option value="jupiter">Jupiter</option>
+                    <option value="saturn">Saturn</option>
+                    <option value="uranus">Uranus</option>
+                    <option value="neptune">Neptune</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="mainContent">
+        <!-- 3D Scene Container -->
+        <div id="planetContainer">
+            <div id="planetScene"></div>
+            
+            <!-- 3D Controls -->
+            <div class="controls-overlay">
+                <div class="zoom-controls">
+                    <button id="zoomInBtn" class="control-btn">+</button>
+                    <button id="zoomOutBtn" class="control-btn">−</button>
+                    <button id="resetViewBtn" class="control-btn">⟲</button>
+                </div>
+                
+                <div class="rotation-controls">
+                    <button id="autoRotateToggle" class="control-btn active">🔄</button>
+                    <label for="rotationSpeed">Speed:</label>
+                    <input type="range" id="rotationSpeed" min="0" max="100" value="50">
+                    <div class="background-controls">
+                        <div class="checkbox-control">
+                            <input type="checkbox" id="backgroundToggle">
+                            <label for="backgroundToggle">Grid View</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Earth...</div>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <aside id="infoPanel" class="info-panel">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="details">Details</button>
+                <button class="tab-btn" data-tab="moons">Moons</button>
+                <button class="tab-btn" data-tab="exploration">Exploration</button>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <h2>Earth Overview</h2>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Type:</span>
+                            <span class="stat-value">Terrestrial Planet</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Diameter:</span>
+                            <span class="stat-value">12,742 km</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Mass:</span>
+                            <span class="stat-value">5.97 × 10²⁴ kg</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Distance from Sun:</span>
+                            <span class="stat-value">149.6 million km (1 AU)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Orbital Period:</span>
+                            <span class="stat-value">365.25 days</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rotation Period:</span>
+                            <span class="stat-value">24 hours</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Moons:</span>
+                            <span class="stat-value">1 (Moon)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Atmosphere:</span>
+                            <span class="stat-value">Nitrogen, Oxygen</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div id="details" class="tab-content">
+                    <h2>Earth Details</h2>
+                    <div class="detail-sections">
+                        <section class="detail-section">
+                            <h3>Composition</h3>
+                            <p>Earth is the densest planet in the Solar System, consisting of a rocky mantle, liquid outer core, and solid inner core. The surface is approximately 71% water and 29% land.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Atmosphere</h3>
+                            <p>Earth's atmosphere is composed of 78% nitrogen, 21% oxygen, with trace amounts of other gases. This unique composition supports life and regulates temperature.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Magnetic Field</h3>
+                            <p>Earth generates a powerful magnetic field from its liquid outer core, protecting the planet from harmful solar radiation and solar wind.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Plate Tectonics</h3>
+                            <p>Earth is the only known planet with active plate tectonics, which drive mountain formation, earthquakes, volcanic activity, and continent movement over geological time scales.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Water Cycle</h3>
+                            <p>Earth's unique water cycle involves evaporation, condensation, and precipitation, creating rivers, oceans, glaciers, and weather patterns that sustain life.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Climate & Weather</h3>
+                            <p>Earth experiences diverse climate zones from polar ice caps to tropical rainforests, driven by atmospheric circulation and ocean currents.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Biosphere</h3>
+                            <p>Earth is the only known planet with life, hosting millions of species in complex ecosystems from deep ocean trenches to high mountain peaks.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Blue Color</h3>
+                            <p>Earth's distinctive blue appearance comes from the scattering of sunlight in our atmosphere and the vast oceans that cover most of its surface.</p>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Moons Tab -->
+                <div id="moons" class="tab-content">
+                    <h2>Luna - Earth's Moon</h2>
+                    <div class="moon-info">
+                        <div class="moon-stats">
+                            <h3>Luna</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">3,474 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Earth:</span>
+                                <span class="stat-value">384,400 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">27.3 days</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Surface Gravity:</span>
+                                <span class="stat-value">1.62 m/s²</span>
+                            </div>
+                        </div>
+                        <div class="moon-description">
+                            <p>The Moon is Earth's only natural satellite and the fifth largest moon in the Solar System. It plays a crucial role in stabilizing Earth's axial tilt (23.5 degrees) and creating ocean tides through gravitational pull.</p>
+                            <p>The Moon formed approximately 4.5 billion years ago, likely from the debris of a giant impact between Earth and a Mars-sized body called Theia. This impact theory explains the Moon's composition and similar isotopic ratios to Earth's mantle.</p>
+                            <p>The Moon's surface is covered with craters from billions of years of meteorite impacts, dark maria formed by ancient volcanic lava flows, and bright highlands composed of lighter-colored rocks. The same side always faces Earth due to tidal locking.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exploration Tab -->
+                <div id="exploration" class="tab-content">
+                    <h2>Earth Exploration</h2>
+                    <div class="exploration-timeline">
+                        <div class="timeline-item">
+                            <h3>Early Humanity (Prehistory)</h3>
+                            <p>Humanity emerged on Earth around 300,000 years ago, developing tools, agriculture, civilization, and eventually scientific understanding of our planet and its place in the cosmos.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Age of Discovery (15th-17th centuries)</h3>
+                            <p>European explorers circumnavigated Earth, proving it was round and mapping its continents, oceans, and diverse cultures, leading to global trade and cultural exchange.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Scientific Revolution (17th-19th centuries)</h3>
+                            <p>Scientists like Newton, Darwin, and others developed fundamental understanding of Earth's physics, geology, biology, and place in the Solar System.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Space Age (1957-Present)</h3>
+                            <p>From Sputnik to the International Space Station, humanity has viewed Earth from space, revealing its beauty, fragility, and the unified nature of our planetary home.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Satellite Era (1960s-Present)</h3>
+                            <p>Thousands of satellites monitor Earth's weather, climate, resources, and human activities, providing unprecedented data for understanding and managing our planet.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Environmental Awareness (1970s-Present)</h3>
+                            <p>Growing understanding of climate change, biodiversity loss, and environmental challenges has driven global efforts to protect Earth's ecosystems for future generations.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Digital Earth (21st Century)</h3>
+                            <p>GPS, internet, AI, and big data technologies enable detailed monitoring, modeling, and management of Earth's systems at unprecedented scales.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <p>🌍 Earth • Third Planet from the Sun • Our Home</p>
+            <div class="footer-links">
+                <button id="screenshotBtn" class="footer-btn">📸 Screenshot</button>
+                <button id="shareBtn" class="footer-btn">🔗 Share</button>
+                <button id="fullscreenBtn" class="footer-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Earth Detail JavaScript -->
+    <script type="module" src="earth.js"></script>
+</body>
+</html>

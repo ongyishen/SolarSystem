@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jupiter - 3D Planet View | Solar System Simulation</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="planet-detail.css">
+    <!-- jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Import Map for Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body class="planet-detail-page">
+    <!-- Navigation Header -->
+    <header id="navigation">
+        <div class="nav-container">
+            <button id="backBtn" class="nav-btn">← Back to Solar System</button>
+            <div class="planet-title">
+                <h1>Jupiter</h1>
+                <span class="subtitle">The Giant Planet</span>
+            </div>
+            <div class="planet-switcher">
+                <select id="planetSelector" class="planet-select">
+                    <option value="mercury">Mercury</option>
+                    <option value="venus">Venus</option>
+                    <option value="earth">Earth</option>
+                    <option value="mars">Mars</option>
+                    <option value="jupiter" selected>Jupiter</option>
+                    <option value="saturn">Saturn</option>
+                    <option value="uranus">Uranus</option>
+                    <option value="neptune">Neptune</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="mainContent">
+        <!-- 3D Scene Container -->
+        <div id="planetContainer">
+            <div id="planetScene"></div>
+            
+            <!-- 3D Controls -->
+            <div class="controls-overlay">
+                <div class="zoom-controls">
+                    <button id="zoomInBtn" class="control-btn">+</button>
+                    <button id="zoomOutBtn" class="control-btn">−</button>
+                    <button id="resetViewBtn" class="control-btn">⟲</button>
+                </div>
+                
+                <div class="rotation-controls">
+                    <button id="autoRotateToggle" class="control-btn active">🔄</button>
+                    <label for="rotationSpeed">Speed:</label>
+                    <input type="range" id="rotationSpeed" min="0" max="100" value="50">
+                </div>
+
+                <div class="atmosphere-controls">
+                    <div class="checkbox-control">
+                        <input type="checkbox" id="stormsToggle" checked>
+                        <label for="stormsToggle">Show Storms</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Jupiter...</div>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <aside id="infoPanel" class="info-panel">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="details">Details</button>
+                <button class="tab-btn" data-tab="moons">Moons</button>
+                <button class="tab-btn" data-tab="exploration">Exploration</button>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <h2>Jupiter Overview</h2>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Type:</span>
+                            <span class="stat-value">Gas Giant</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Diameter:</span>
+                            <span class="stat-value">139,820 km</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Mass:</span>
+                            <span class="stat-value">1.90 × 10²⁷ kg</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Distance from Sun:</span>
+                            <span class="stat-value">778.5 million km (5.2 AU)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Orbital Period:</span>
+                            <span class="stat-value">12 years</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rotation Period:</span>
+                            <span class="stat-value">10 hours</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Moons:</span>
+                            <span class="stat-value">95 (including 4 major)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Atmosphere:</span>
+                            <span class="stat-value">Hydrogen, Helium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div id="details" class="tab-content">
+                    <h2>Jupiter Details</h2>
+                    <div class="detail-sections">
+                        <section class="detail-section">
+                            <h3>Composition</h3>
+                            <p>Jupiter is the largest planet in our Solar System, a gas giant composed primarily of hydrogen and helium. It may have a rocky core, but most of its volume consists of metallic hydrogen and liquid hydrogen.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Great Red Spot</h3>
+                            <p>The Great Red Spot is a massive storm that has been raging for at least 350 years. This anticyclonic storm is larger than Earth and rotates counterclockwise with wind speeds exceeding 400 km/h.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Bands and Zones</h3>
+                            <p>Jupiter's distinctive banded appearance comes from alternating cloud layers called zones (lighter, rising clouds) and belts (darker, sinking clouds). These create complex weather patterns with winds reaching 500 km/h.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Magnetic Field</h3>
+                            <p>Jupiter has the strongest magnetic field of any planet, about 20,000 times stronger than Earth's. This creates powerful radiation belts and spectacular aurora at its poles.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Radiation Belts</h3>
+                            <p>Jupiter's intense magnetic field traps charged particles, creating dangerous radiation belts that would be lethal to unprotected spacecraft and humans.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Internal Heat</h3>
+                            <p>Jupiter generates more heat than it receives from the Sun, likely from the gradual compression of its massive interior through Kelvin-Helmholtz contraction.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Ring System</h3>
+                            <p>Jupiter has a faint ring system composed of dust particles ejected from its moons during meteorite impacts. The rings were discovered in 1979 by the Voyager 1 spacecraft.</p>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Moons Tab -->
+                <div id="moons" class="tab-content">
+                    <h2>Jupiter's Major Moons</h2>
+                    <div class="moon-info">
+                        <div class="moon-stats">
+                            <h3>Io</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">3,643 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Jupiter:</span>
+                                <span class="stat-value">421,800 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">1.8 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Europa</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">3,122 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Jupiter:</span>
+                                <span class="stat-value">671,100 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">3.5 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Ganymede</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">5,268 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Jupiter:</span>
+                                <span class="stat-value">1,070,400 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">7.2 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Callisto</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">4,821 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Jupiter:</span>
+                                <span class="stat-value">1,882,700 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">16.7 days</span>
+                            </div>
+                        </div>
+                        <div class="moon-description">
+                            <p>The four largest moons, discovered by Galileo in 1610, are called the Galilean moons. Io is the most volcanically active body in the Solar System. Europa likely has a subsurface ocean beneath its icy crust. Ganymede is the largest moon in the Solar System and has its own magnetic field. Callisto has the oldest and most cratered surface of any known object in the Solar System.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exploration Tab -->
+                <div id="exploration" class="tab-content">
+                    <h2>Jupiter Exploration</h2>
+                    <div class="exploration-timeline">
+                        <div class="timeline-item">
+                            <h3>Early Observations (Ancient Times)</h3>
+                            <p>Jupiter has been known since ancient times as one of the brightest "wandering stars" in the night sky. Its name comes from the king of the Roman gods.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Galileo's Discovery (1610)</h3>
+                            <p>Galileo Galilei discovered Jupiter's four largest moons using his telescope, providing crucial evidence for the Copernican heliocentric model of the Solar System.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Pioneer Missions (1973-1974)</h3>
+                            <p>Pioneer 10 and 11 were the first spacecraft to fly by Jupiter, providing close-up images and data about Jupiter's intense radiation environment and magnetic field.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Voyager Missions (1979)</h3>
+                            <p>Voyager 1 and 2 conducted detailed studies of Jupiter and its moons, discovering active volcanoes on Io and Jupiter's faint ring system.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Galileo Orbiter (1995-2003)</h3>
+                            <p>NASA's Galileo spacecraft was the first to orbit Jupiter, conducting extensive studies of the planet and its moons, including dropping a probe into Jupiter's atmosphere.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Juno Mission (2016-Present)</h3>
+                            <p>NASA's Juno spacecraft is currently studying Jupiter's composition, gravity field, magnetic field, and polar magnetosphere, providing unprecedented insights into the planet's formation and evolution.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Future Missions</h3>
+                            <p>Europa Clipper (planned 2024) will study Jupiter's moon Europa for potential habitability, while JUICE (ESA) will explore Jupiter and its icy moons.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <p>🟠 Jupiter • Fifth Planet from the Sun • The King of Planets</p>
+            <div class="footer-links">
+                <button id="screenshotBtn" class="footer-btn">📸 Screenshot</button>
+                <button id="shareBtn" class="footer-btn">🔗 Share</button>
+                <button id="fullscreenBtn" class="footer-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Jupiter Detail JavaScript -->
+    <script type="module" src="jupiter.js"></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mars - 3D Planet View | Solar System Simulation</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="planet-detail.css">
+    <!-- jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Import Map for Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body class="planet-detail-page">
+    <!-- Navigation Header -->
+    <header id="navigation">
+        <div class="nav-container">
+            <button id="backBtn" class="nav-btn">← Back to Solar System</button>
+            <div class="planet-title">
+                <h1>Mars</h1>
+                <span class="subtitle">The Red Planet</span>
+            </div>
+            <div class="planet-switcher">
+                <select id="planetSelector" class="planet-select">
+                    <option value="mercury">Mercury</option>
+                    <option value="venus">Venus</option>
+                    <option value="earth">Earth</option>
+                    <option value="mars" selected>Mars</option>
+                    <option value="jupiter">Jupiter</option>
+                    <option value="saturn">Saturn</option>
+                    <option value="uranus">Uranus</option>
+                    <option value="neptune">Neptune</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="mainContent">
+        <!-- 3D Scene Container -->
+        <div id="planetContainer">
+            <div id="planetScene"></div>
+            
+            <!-- 3D Controls -->
+            <div class="controls-overlay">
+                <div class="zoom-controls">
+                    <button id="zoomInBtn" class="control-btn">+</button>
+                    <button id="zoomOutBtn" class="control-btn">−</button>
+                    <button id="resetViewBtn" class="control-btn">⟲</button>
+                </div>
+                
+                <div class="rotation-controls">
+                    <button id="autoRotateToggle" class="control-btn active">🔄</button>
+                    <label for="rotationSpeed">Speed:</label>
+                    <input type="range" id="rotationSpeed" min="0" max="100" value="50">
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Mars...</div>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <aside id="infoPanel" class="info-panel">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="details">Details</button>
+                <button class="tab-btn" data-tab="moons">Moons</button>
+                <button class="tab-btn" data-tab="exploration">Exploration</button>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <h2>Mars Overview</h2>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Type:</span>
+                            <span class="stat-value">Terrestrial Planet</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Diameter:</span>
+                            <span class="stat-value">6,779 km</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Mass:</span>
+                            <span class="stat-value">6.42 × 10²³ kg</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Distance from Sun:</span>
+                            <span class="stat-value">227.9 million km (1.52 AU)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Orbital Period:</span>
+                            <span class="stat-value">687 days</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rotation Period:</span>
+                            <span class="stat-value">24.6 hours</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Moons:</span>
+                            <span class="stat-value">2 (Phobos, Deimos)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Atmosphere:</span>
+                            <span class="stat-value">Carbon Dioxide</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div id="details" class="tab-content">
+                    <h2>Mars Details</h2>
+                    <div class="detail-sections">
+                        <section class="detail-section">
+                            <h3>Composition</h3>
+                            <p>Mars is a rocky planet composed primarily of silicate minerals, metals, and other elements that make up the crust and mantle. Its core is believed to be composed of iron, nickel, and sulfur.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Surface Features</h3>
+                            <p>Mars features the largest volcano in the Solar System (Olympus Mons), the deepest canyon (Valles Marineris), and evidence of ancient river valleys and lakebeds, suggesting it once had liquid water.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Climate</h3>
+                            <p>Mars has a thin atmosphere composed mainly of carbon dioxide, with extreme temperature variations. Polar ice caps contain both water ice and frozen carbon dioxide (dry ice).</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Red Color</h3>
+                            <p>Mars' distinctive red color comes from iron oxide (rust) on its surface. The fine dust particles are scattered by winds, creating global dust storms that can blanket the entire planet.</p>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Moons Tab -->
+                <div id="moons" class="tab-content">
+                    <h2>Martian Moons</h2>
+                    <div class="moon-info">
+                        <div class="moon-stats">
+                            <h3>Phobos</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">22.2 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Mars:</span>
+                                <span class="stat-value">9,377 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">7.6 hours</span>
+                            </div>
+                        </div>
+                        <div class="moon-stats">
+                            <h3>Deimos</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Diameter:</span>
+                                <span class="stat-value">12.4 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Distance from Mars:</span>
+                                <span class="stat-value">23,460 km</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Orbital Period:</span>
+                                <span class="stat-value">30.3 hours</span>
+                            </div>
+                        </div>
+                        <div class="moon-description">
+                            <p>Mars has two small, irregularly shaped moons believed to be captured asteroids. Phobos orbits so close to Mars that it rises in the west and sets in the east, completing three orbits each Martian day.</p>
+                            <p>Both moons are heavily cratered and may contain water ice beneath their surfaces. They are named after the Greek gods Phobos (fear) and Deimos (terror), who accompanied their father Ares (Mars) into battle.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exploration Tab -->
+                <div id="exploration" class="tab-content">
+                    <h2>Mars Exploration</h2>
+                    <div class="exploration-timeline">
+                        <div class="timeline-item">
+                            <h3>Early Missions (1960s-1970s)</h3>
+                            <p>The Soviet Union's Mars program and NASA's Mariner missions provided the first close-up images of Mars, revealing it as a cratered, desert-like world.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Viking Landers (1976)</h3>
+                            <p>NASA's Viking 1 and 2 were the first spacecraft to successfully land on Mars and perform extended experiments searching for signs of life.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Rover Era (1997-Present)</h3>
+                            <p>From Sojourner to Perseverance, rovers have revolutionized our understanding of Mars, revealing evidence of ancient habitable environments and complex geological history.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Future Missions</h3>
+                            <p>Planned missions include Mars Sample Return, which will bring Martian rocks back to Earth for detailed analysis, and continued preparation for eventual human exploration.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <p>🔴 Mars • Fourth Planet from the Sun • The Red World</p>
+            <div class="footer-links">
+                <button id="screenshotBtn" class="footer-btn">📸 Screenshot</button>
+                <button id="shareBtn" class="footer-btn">🔗 Share</button>
+                <button id="fullscreenBtn" class="footer-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mars Detail JavaScript -->
+    <script type="module" src="mars.js"></script>
+</body>
+</html>

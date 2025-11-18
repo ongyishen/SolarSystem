@@ -787,14 +787,19 @@ function onMouseClick(event) {
 function showPlanetInfo(planet) {
     selectedPlanet = planet;
     
-    $('#planetName').text(planet.data.name);
-    $('#planetSize').text(planet.data.radius.toFixed(2) + ' Earth radii');
-    $('#planetOrbit').text(planet.data.actualDistance + ' AU');
-    $('#planetRotation').text(planet.data.rotationPeriod);
-    $('#planetRevolution').text(planet.data.revolutionPeriod);
-    $('#planetMoons').text(planet.data.moons);
+    // Navigate to planet detail page instead of showing panel
+    const planetName = planet.data.name.toLowerCase();
+    window.location.href = `planets/${planetName}.html`;
     
-    $('#planetPanel').removeClass('hidden');
+    // Original panel code (commented out - kept for reference)
+    // $('#planetName').text(planet.data.name);
+    // $('#planetSize').text(planet.data.radius.toFixed(2) + ' Earth radii');
+    // $('#planetOrbit').text(planet.data.actualDistance + ' AU');
+    // $('#planetRotation').text(planet.data.rotationPeriod);
+    // $('#planetRevolution').text(planet.data.revolutionPeriod);
+    // $('#planetMoons').text(planet.data.moons);
+    // 
+    // $('#planetPanel').removeClass('hidden');
 }
 
 // Close planet information panel

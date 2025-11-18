@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercury - 3D Planet View | Solar System Simulation</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="planet-detail.css">
+    <!-- jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Import Map for Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body class="planet-detail-page">
+    <!-- Navigation Header -->
+    <header id="navigation">
+        <div class="nav-container">
+            <button id="backBtn" class="nav-btn">← Back to Solar System</button>
+            <div class="planet-title">
+                <h1>Mercury</h1>
+                <span class="subtitle">The Swift Planet</span>
+            </div>
+            <div class="planet-switcher">
+                <select id="planetSelector" class="planet-select">
+                    <option value="mercury" selected>Mercury</option>
+                    <option value="venus">Venus</option>
+                    <option value="earth">Earth</option>
+                    <option value="mars">Mars</option>
+                    <option value="jupiter">Jupiter</option>
+                    <option value="saturn">Saturn</option>
+                    <option value="uranus">Uranus</option>
+                    <option value="neptune">Neptune</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="mainContent">
+        <!-- 3D Scene Container -->
+        <div id="planetContainer">
+            <div id="planetScene"></div>
+            
+            <!-- 3D Controls -->
+            <div class="controls-overlay">
+                <div class="zoom-controls">
+                    <button id="zoomInBtn" class="control-btn">+</button>
+                    <button id="zoomOutBtn" class="control-btn">−</button>
+                    <button id="resetViewBtn" class="control-btn">⟲</button>
+                </div>
+                
+                <div class="rotation-controls">
+                    <button id="autoRotateToggle" class="control-btn active">🔄</button>
+                    <label for="rotationSpeed">Speed:</label>
+                    <input type="range" id="rotationSpeed" min="0" max="100" value="50">
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Mercury...</div>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <aside id="infoPanel" class="info-panel">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="details">Details</button>
+                <button class="tab-btn" data-tab="moons">Moons</button>
+                <button class="tab-btn" data-tab="exploration">Exploration</button>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-content active">
+                    <h2>Mercury Overview</h2>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Type:</span>
+                            <span class="stat-value">Terrestrial Planet</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Diameter:</span>
+                            <span class="stat-value">4,879 km</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Mass:</span>
+                            <span class="stat-value">3.30 × 10²³ kg</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Distance from Sun:</span>
+                            <span class="stat-value">57.9 million km (0.39 AU)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Orbital Period:</span>
+                            <span class="stat-value">88 days</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rotation Period:</span>
+                            <span class="stat-value">59 days</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Moons:</span>
+                            <span class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Atmosphere:</span>
+                            <span class="stat-value">Minimal (Oxygen, Sodium, Hydrogen)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div id="details" class="tab-content">
+                    <h2>Mercury Details</h2>
+                    <div class="detail-sections">
+                        <section class="detail-section">
+                            <h3>Composition</h3>
+                            <p>Mercury is the smallest planet in our Solar System and the closest to the Sun. It has a large iron core, making up about 75% of its radius, which gives it an unusually high density for its size.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Surface Features</h3>
+                            <p>Mercury's surface is covered with craters, similar to Earth's Moon. It features vast impact basins, cliffs hundreds of kilometers long, and smooth plains created by ancient volcanic activity.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Extreme Temperatures</h3>
+                            <p>Mercury experiences the most extreme temperature variations in the Solar System, ranging from 430°C (800°F) during the day to −180°C (−290°F) at night, due to its lack of atmosphere.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Orbital Characteristics</h3>
+                            <p>Mercury has the most eccentric orbit of all planets, and its rotation is tidally locked in a 3:2 resonance with its orbit, meaning it rotates exactly three times for every two orbits around the Sun.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Magnetic Field</h3>
+                            <p>Despite its small size, Mercury has a magnetic field about 1% as strong as Earth's, likely generated by its liquid outer core interacting with the solar wind.</p>
+                        </section>
+                        <section class="detail-section">
+                            <h3>Water Ice</h3>
+                            <p>Surprisingly, radar observations have confirmed the presence of water ice in permanently shadowed craters at Mercury's poles, where temperatures remain cold enough to keep ice stable.</p>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Moons Tab -->
+                <div id="moons" class="tab-content">
+                    <h2>No Natural Moons</h2>
+                    <div class="moon-info">
+                        <div class="moon-description">
+                            <p>Mercury does not have any natural satellites or moons. Its proximity to the Sun and relatively small size make gravitational capture of moons extremely difficult.</p>
+                            <p>The powerful gravitational influence of the Sun and Mercury's weak gravitational field would prevent any moon from maintaining a stable orbit around the planet.</p>
+                            <p>Any potential moons would either be pulled into the Sun or ejected from Mercury's orbit relatively quickly in astronomical time scales.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exploration Tab -->
+                <div id="exploration" class="tab-content">
+                    <h2>Mercury Exploration</h2>
+                    <div class="exploration-timeline">
+                        <div class="timeline-item">
+                            <h3>Early Observations (Ancient Times)</h3>
+                            <p>Mercury has been observed since ancient times, visible to the naked eye. Its rapid movement across the sky earned it names like the "messenger god" in various cultures.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Mariner 10 (1974-1975)</h3>
+                            <p>NASA's Mariner 10 was the first spacecraft to visit Mercury, making three flybys and photographing about 45% of the planet's surface, revealing its cratered terrain.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>MESSENGER (2011-2015)</h3>
+                            <p>NASA's MESSENGER spacecraft became the first to orbit Mercury, mapping the entire planet, discovering water ice in polar craters, and studying Mercury's composition and magnetic field.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>BepiColombo (2018-Present)</h3>
+                            <p>A joint European Space Agency and Japanese mission currently en route to Mercury, scheduled to enter orbit in 2025. It will study Mercury's composition, geophysics, and atmosphere.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3>Future Missions</h3>
+                            <p>Planned missions include potential landers to study Mercury's surface composition and search for volatile compounds in polar craters.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <p>⚪ Mercury • First Planet from the Sun • The Swift Messenger</p>
+            <div class="footer-links">
+                <button id="screenshotBtn" class="footer-btn">📸 Screenshot</button>
+                <button id="shareBtn" class="footer-btn">🔗 Share</button>
+                <button id="fullscreenBtn" class="footer-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mercury Detail JavaScript -->
+    <script type="module" src="mercury.js"></script>
+</body>
+</html>
